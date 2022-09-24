@@ -17,5 +17,5 @@ class Produk extends Model
 
     protected $cast =[
         'harga' => 'int',
-    ]
+    ];
 }
