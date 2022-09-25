@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 
+use Illuminate\Http\Resource\ProdukResource
+
 class ProdukController extends Controller
 {
     /**
@@ -15,7 +17,9 @@ class ProdukController extends Controller
      */
     public function index()
     {
-        //
+        $produks = Produk::all();
+        return response('produks'=> ProdukResource::collection
+        ($produks,'message'=>'data berhasil ditampilkan',200));
     }
 
     /**
@@ -26,7 +30,19 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $validator = Validator::($data,[
+            'nama' => 'required|max:255',
+            'alamat'=> 'required|max:255',
+            'harga'=> 'required',
+        ]);
+
+        if ($validator->fails()){
+            return response(['error'=>$validator->errors(),'validatasi nama harga salah!']);
+        }
+        $produk = Produk::create($data);
+        return response(['produk'=> new ProdukResource($produk),'message'=>'data berhasil ditambahkan']);
+
     }
 
     /**
@@ -37,7 +53,7 @@ class ProdukController extends Controller
      */
     public function show(Produk $produk)
     {
-        //
+        return response(['produk'=> new ProdukResource($produk),'message'=>'data berhasil diambil'],200);
     }
 
     /**
@@ -49,7 +65,9 @@ class ProdukController extends Controller
      */
     public function update(Request $request, Produk $produk)
     {
-        //
+        $produk->update($request->all());
+        return response(['produk'=> new ProdukResource($produk),
+        'message'=>'data berhasil diupdate'],200);
     }
 
     /**
@@ -60,6 +78,8 @@ class ProdukController extends Controller
      */
     public function destroy(Produk $produk)
     {
-        //
+        $produk->delete();
+
+        return response(['message'=>'data terhapus']);
     }
 }
